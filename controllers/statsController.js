@@ -1,4 +1,4 @@
-const Mediation = require('../models/Mediation');
+const Mediation = require('../models/mediation');
 const User = require('../models/User');
 
 const getStats = async (req, res) => {
