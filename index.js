@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Habilitar CORS
 app.use(cors({
-    origin: 'http://localhost:3000', // Permite solicitudes desde el frontend
+    origin: 'https://guardian-bridge-frontend.vercel.app', // Permite solicitudes desde el frontend
     credentials: true, // Permite el envío de cookies y encabezados de autenticación
 }));
 
