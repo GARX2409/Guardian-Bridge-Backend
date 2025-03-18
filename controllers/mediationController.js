@@ -1,4 +1,4 @@
-const Mediation = require('../models/Mediation');
+const Mediation = require('../models/mediation');
 
 // Obtener todas las mediaciones (filtradas por rol)
 const getMediations = async (req, res) => {
