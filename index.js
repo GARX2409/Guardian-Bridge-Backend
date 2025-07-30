@@ -34,7 +34,7 @@ connectDB();
 
 app.use(express.json());
 app.use(cors({
-    origin: 'https://guardian-bridge-frontend.vercel.app', // Permite solicitudes desde el frontend
+    origin: 'https://guardian-bridge.vercel.app', // Permite solicitudes desde el frontend
     credentials: true, // Permite el envío de cookies y encabezados de autenticación
 }));
 
