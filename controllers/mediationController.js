@@ -1,4 +1,6 @@
 const Mediation = require('../models/mediation');
+const Notification = require('../models/Notification');
+const User = require('../models/User');
 
 // Obtener todas las mediaciones (filtradas por rol)
 const getMediations = async (req, res) => {
@@ -26,16 +28,9 @@ const getMediations = async (req, res) => {
 // Crear una nueva mediación
 const createMediation = async (req, res) => {
     const { nombre, titulo, descripcion, tipoFalta, sede } = req.body;
-    const createdBy = req.user.id; // Obtener el ID del usuario autenticado desde el token
+    const createdBy = req.user.id;
 
     try {
-        console.log('Datos recibidos:', req.body); // Log para depuración
-
-        // Validar que todos los campos obligatorios estén presentes
-        if (!nombre || !titulo || !descripcion || !tipoFalta || !sede || !createdBy) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-        }
-
         // Crear la mediación
         const mediation = new Mediation({
             nombre,
@@ -46,19 +41,30 @@ const createMediation = async (req, res) => {
             createdBy,
         });
 
-        // Guardar en la base de datos
         await mediation.save();
 
-        console.log('Mediación creada:', mediation); // Log para depuración
+        // Enviar notificación a mediadores y docentes
+        const mediadores = await User.find({ role: 'mediador' });
+        const docentes = await User.find({ role: 'docente' });
 
-        // Enviar respuesta
+        const recipients = [...mediadores, ...docentes];
+
+        recipients.forEach(async (user) => {
+            const notification = new Notification({
+                userId: user._id,
+                message: `Nueva mediación creada: ${titulo}`, // Mensaje de la notificación
+                type: 'mediation_created',
+            });
+
+            await notification.save();
+        });
+
         res.status(201).json(mediation);
     } catch (error) {
         console.error('Error al crear la mediación:', error);
         res.status(500).json({ message: 'Error en el servidor', error: error.message });
     }
 };
-
 // Actualizar la mediación
 const updateMediation = async (req, res) => {
     const { id } = req.params;

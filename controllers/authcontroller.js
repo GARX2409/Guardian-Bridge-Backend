@@ -62,4 +62,17 @@ const updatePassword = async (req, res) => {
     }
 };
 
-module.exports = { login, getUser, updatePassword };
+const updateStatus = async (req, res) => {
+    const { isOnline } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const user = await User.findByIdAndUpdate(userId, { isOnline, lastSeen: Date.now() }, { new: true });
+        res.status(200).json({ message: 'Estado de conexión actualizado', user });
+    } catch (error) {
+        console.error('Error al actualizar el estado de conexión:', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
+module.exports = { login, getUser, updatePassword, updateStatus };
